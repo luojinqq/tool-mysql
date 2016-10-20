@@ -1,0 +1,25 @@
+version: "2"
+
+services:
+  master:
+    image: ${DOCKER_REGISTRY}/tool/mysql:master
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+    - 3306:3306
+    volumes:
+    - ${DATA_ROOT}/master:/var/lib/mysql:rw
+  slave:
+    depends_on:
+    - master
+    image: ${DOCKER_REGISTRY}/tool/mysql:slave
+    ports:
+    - 3307:3306
+    links:
+    - master:mysql
+    environment:
+      MYSQL_MASTER_HOST: mysql
+      MYSQL_MASTER_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+    - ${DATA_ROOT}/slave:/var/lib/mysql:rw
